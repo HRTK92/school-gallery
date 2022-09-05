@@ -11,15 +11,15 @@ const PhotoList: NextPage = () => {
   }
   const [list, setList] = useState<Array<number>>([])
   const [visible, setVisible] = useState<number>(0)
+  const [pageStart, setPageStart] = useState<number>(0)
   const handler = (id: number) => setVisible(id)
   const closeHandler = (id: number) => {
     setVisible(0)
-    console.log('closed')
   }
 
   //項目を読み込むときのコールバック
   const loadMore = (page: number) => {
-    setList([...list, page])
+    setList([...list, page, page + 1])
   }
 
   //各スクロール要素
@@ -53,6 +53,7 @@ const PhotoList: NextPage = () => {
       {list.map((value) => (
         <Modal
           closeButton
+          blur
           aria-labelledby='modal-title'
           open={visible == value}
           onClose={() => closeHandler(value)}
@@ -91,7 +92,7 @@ const PhotoList: NextPage = () => {
   )
   const loader = (
     <Grid.Container justify='center'>
-      <Loading />
+      <Loading size='md' />
     </Grid.Container>
   )
 
@@ -101,6 +102,7 @@ const PhotoList: NextPage = () => {
         loadMore={loadMore} //項目を読み込む際に処理するコールバック関数
         hasMore={true} //読み込みを行うかどうかの判定
         loader={loader}
+        pageStart={pageStart}
       >
         {' '}
         {/* 読み込み最中に表示する項目 */}
