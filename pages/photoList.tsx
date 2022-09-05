@@ -19,7 +19,7 @@ const PhotoList: NextPage = () => {
 
   //項目を読み込むときのコールバック
   const loadMore = (page: number) => {
-    setList([...list, page, page + 1])
+    setList([...list, page])
   }
 
   //各スクロール要素
