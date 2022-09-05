@@ -12,17 +12,18 @@ const PhotoList: NextPage = () => {
   const [list, setList] = useState<Array<number>>([])
   const [visible, setVisible] = useState<number>(0)
   const [pageStart, setPageStart] = useState<number>(0)
-  const handler = (id: number) => setVisible(id)
-  const closeHandler = (id: number) => {
+  const handler = (id: number) => {
+    setVisible(id)
+  }
+  const closeHandler = () => {
     setVisible(0)
+    return true
   }
 
-  //項目を読み込むときのコールバック
   const loadMore = (page: number) => {
     setList([...list, page])
   }
 
-  //各スクロール要素
   const items = (
     <>
       <Grid.Container gap={2} justify='flex-start'>
@@ -50,44 +51,6 @@ const PhotoList: NextPage = () => {
           </Grid>
         ))}
       </Grid.Container>
-      {list.map((value) => (
-        <Modal
-          closeButton
-          blur
-          aria-labelledby='modal-title'
-          open={visible == value}
-          onClose={() => closeHandler(value)}
-          key={value}
-        >
-          <Modal.Header>
-            <Text id='modal-title' size={18}>
-              写真
-              <Text b size={18}>
-                No.{value}
-              </Text>
-            </Text>
-          </Modal.Header>
-          <Modal.Body>
-            <Image
-              showSkeleton
-              src={`https://www.n-ipgs.jp/upload/save_image/00030249/${('000' + value).slice(
-                -3
-              )}.JPG`}
-              objectFit='cover'
-              width='full'
-              height='full'
-              alt='Card image background'
-              maxDelay={10000}
-              onClick={() => handler(value)}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button auto flat color='error' onClick={() => closeHandler(value)}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      ))}
     </>
   )
   const loader = (
@@ -108,6 +71,46 @@ const PhotoList: NextPage = () => {
         {/* 読み込み最中に表示する項目 */}
         {items} {/* 無限スクロールで表示する項目 */}
       </InfiniteScroll>
+      <Modal
+        closeButton
+        blur
+        aria-labelledby='modal-title'
+        open={!(visible === 0)}
+        onClose={closeHandler}
+      >
+        <Modal.Header>
+          <Text id='modal-title' size={18}>
+            写真
+            <Text b size={18}>
+              No.{visible}
+            </Text>
+          </Text>
+        </Modal.Header>
+        <Modal.Body>
+          <Image
+            showSkeleton
+            src={`https://www.n-ipgs.jp/upload/save_image/00030249/${('000' + visible).slice(
+              -3
+            )}.JPG`}
+            objectFit='cover'
+            width='full'
+            height='full'
+            alt='Card image background'
+            maxDelay={10000}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button auto onClick={() => setVisible(visible - 1)}>
+            Back
+          </Button>
+          <Button auto onClick={() => setVisible(visible + 1)}>
+            Next
+          </Button>
+          <Button auto flat color='error' onClick={closeHandler}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   )
 }
