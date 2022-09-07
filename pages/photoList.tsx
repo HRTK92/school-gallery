@@ -1,9 +1,11 @@
-import { Button, Card, Col, Grid, Image, Input, Loading, Modal, Row, Text } from '@nextui-org/react'
+import { Button, Card, Grid, Image, Input, Loading, Modal, Row, Text } from '@nextui-org/react'
 import { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 
 const PhotoList: NextPage = () => {
+  const router = useRouter()
   if (typeof window === 'object') {
     document.oncontextmenu = function () {
       return false
@@ -14,18 +16,9 @@ const PhotoList: NextPage = () => {
   const [viewValue, setViewValue] = useState<number>(0)
   const [pageStart, setPageStart] = useState<number>(0)
   const [loadingList, setLoadingList] = useState<boolean>(true)
-  const handler = (id: number) => {
-    setVisible(id)
-  }
-  const closeHandler = () => {
-    setVisible(0)
-    return true
-  }
-
   const loadMore = (page: number) => {
     setList([...list, page])
   }
-
   const items = (
     <>
       <Grid.Container gap={2} justify='flex-start'>
@@ -34,7 +27,7 @@ const PhotoList: NextPage = () => {
             <Card key={value}>
               <Card.Image
                 showSkeleton
-                src={`https://www.n-ipgs.jp/upload/save_image/00030249/${('000' + value).slice(
+                src={`https://www.n-ipgs.jp/upload/save_image/${router.query.id}/${('000' + value).slice(
                   -3
                 )}.JPG`}
                 objectFit='cover'
@@ -42,7 +35,7 @@ const PhotoList: NextPage = () => {
                 height={180}
                 alt={`${visible}.jpg`}
                 maxDelay={10000}
-                onClick={() => handler(value)}
+                onClick={() => setVisible(value)}
               />
               <Card.Footer css={{ justifyItems: 'flex-start' }}>
                 <Row wrap='wrap' justify='space-between' align='center'>
@@ -64,6 +57,10 @@ const PhotoList: NextPage = () => {
   setTimeout(() => {
     setLoadingList(false)
   }, 2 * 1000)
+
+  if (!(typeof router.query.id === 'string')) {
+    return <>404</>
+  }
 
   return (
     <>
@@ -107,7 +104,7 @@ const PhotoList: NextPage = () => {
         blur
         aria-labelledby='modal-title'
         open={!(visible === 0)}
-        onClose={closeHandler}
+        onClose={()=>setVisible(0)}
       >
         <Modal.Header>
           <Text id='modal-title' size={18}>
@@ -120,7 +117,7 @@ const PhotoList: NextPage = () => {
         <Modal.Body>
           <Image
             showSkeleton
-            src={`https://www.n-ipgs.jp/upload/save_image/00030249/${('000' + visible).slice(
+            src={`https://www.n-ipgs.jp/upload/save_image/${router.query.id}/${('000' + visible).slice(
               -3
             )}.JPG`}
             objectFit='cover'
@@ -137,7 +134,7 @@ const PhotoList: NextPage = () => {
           <Button bordered color='secondary' auto onClick={() => setVisible(visible + 1)}>
             Next
           </Button>
-          <Button auto flat color='error' onClick={closeHandler}>
+          <Button auto flat color='error' onClick={()=>setVisible(0)}>
             Close
           </Button>
         </Modal.Footer>
