@@ -2,6 +2,7 @@ import { Button, Card, Col, Grid, Image, Input, Loading, Modal, Row, Text } from
 import { NextPage } from 'next'
 import { useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
+import { SendButton } from '../components/SendButton'
 
 const PhotoList: NextPage = () => {
   if (typeof window === 'object') {
@@ -11,7 +12,9 @@ const PhotoList: NextPage = () => {
   }
   const [list, setList] = useState<Array<number>>([])
   const [visible, setVisible] = useState<number>(0)
+  const [viewValue, setViewValue] = useState<number>(0)
   const [pageStart, setPageStart] = useState<number>(0)
+  const [loadingList, setLoadingList] = useState<boolean>(true)
   const handler = (id: number) => {
     setVisible(id)
   }
@@ -38,7 +41,7 @@ const PhotoList: NextPage = () => {
                 objectFit='cover'
                 width={320}
                 height={180}
-                alt='Card image background'
+                alt={`${visible}.jpg`}
                 maxDelay={10000}
                 onClick={() => handler(value)}
               />
@@ -55,22 +58,51 @@ const PhotoList: NextPage = () => {
   )
   const loader = (
     <Grid.Container justify='center'>
-      <Loading size='md' />
+      <Loading size='lg' />
     </Grid.Container>
   )
 
+  setTimeout(() => {
+    setLoadingList(false)
+  }, 2 * 1000)
+
   return (
     <>
-      <InfiniteScroll
-        loadMore={loadMore} //項目を読み込む際に処理するコールバック関数
-        hasMore={true} //読み込みを行うかどうかの判定
-        loader={loader}
-        pageStart={pageStart}
-      >
-        {' '}
-        {/* 読み込み最中に表示する項目 */}
-        {items} {/* 無限スクロールで表示する項目 */}
-      </InfiniteScroll>
+      <Input
+        clearable
+        contentRightStyling={false}
+        placeholder='見たい写真の番号を入力'
+        onChange={(e) => setViewValue(Number(e.target.value))}
+        value={viewValue === 0 ? '' : viewValue}
+        contentRight={
+          <Button
+            shadow
+            rounded
+            flat
+            auto
+            size={'xs'}
+            color={'gradient'}
+            onClick={() => setVisible(viewValue)}
+          >
+            Go
+          </Button>
+        }
+      />
+      {loadingList ? (
+        <Grid.Container alignItems='center' css={{ maxW: 800, marginTop: 100 }} justify='center'>
+          <Loading type='points' size='lg'><Text color='gray'>Now Loading... Created by HRTK92</Text></Loading>
+        </Grid.Container>
+      ) : (
+        <InfiniteScroll
+          loadMore={loadMore} //項目を読み込む際に処理するコールバック関数
+          hasMore={true} //読み込みを行うかどうかの判定
+          loader={loader}
+          pageStart={pageStart}
+          threshold={700}
+        >
+          {items} {/* 無限スクロールで表示する項目 */}
+        </InfiniteScroll>
+      )}
       <Modal
         closeButton
         blur
@@ -95,15 +127,15 @@ const PhotoList: NextPage = () => {
             objectFit='cover'
             width='full'
             height='full'
-            alt='Card image background'
+            alt={`${visible}.jpg`}
             maxDelay={10000}
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button auto onClick={() => setVisible(visible - 1)}>
+          <Button bordered auto onClick={() => setVisible(visible - 1)}>
             Back
           </Button>
-          <Button auto onClick={() => setVisible(visible + 1)}>
+          <Button bordered color='secondary' auto onClick={() => setVisible(visible + 1)}>
             Next
           </Button>
           <Button auto flat color='error' onClick={closeHandler}>
