@@ -2,7 +2,6 @@ import { Button, Card, Col, Grid, Image, Input, Loading, Modal, Row, Text } from
 import { NextPage } from 'next'
 import { useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { SendButton } from '../components/SendButton'
 
 const PhotoList: NextPage = () => {
   if (typeof window === 'object') {
