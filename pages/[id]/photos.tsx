@@ -108,7 +108,7 @@ const PhotoList: NextPage = () => {
             setlists([])
             setShowType(val)
             if (val === 'page') {
-              setlists(Array.from({length:19},(v,k)=>k+1))
+              setlists(Array.from({ length: 19 }, (v, k) => k + 1))
             }
           }}
           orientation='horizontal'
@@ -146,7 +146,7 @@ const PhotoList: NextPage = () => {
                 initialPage={1}
                 onChange={(page) =>
                   setlists(
-                    Array((page * 20) - ((page - 1) * 20))
+                    Array(page * 20 - (page - 1) * 20)
                       .fill(1)
                       .map((_, idx) => (page - 1) * 20 + idx)
                   )
