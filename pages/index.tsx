@@ -17,7 +17,7 @@ const Home: NextPage = () => {
     <>
       <Grid.Container justify='center' gap={4}>
         <Grid css={{ margin: 20 }}>
-          <Input underlined labelPlaceholder='ID' color='default' value={id} onChange={(e)=>setId(e.target.value)} />
+          <Input underlined labelPlaceholder='ID' color='default' value={id} onChange={(e)=>setId(e.target.value)} disabled={router.query.id?true :false} />
             <Button onClick={()=>router.push(`/${id}/photos`)} css={{ marginTop: 10 }} shadow>
               Go
             </Button>
